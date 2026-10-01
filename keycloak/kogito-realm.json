@@ -1,0 +1,229 @@
+{
+  "realm": "kogito",
+  "enabled": true,
+  "sslRequired": "none",
+  "groups": [
+    {
+      "name": "FOSS"
+    },
+    {
+      "name": "KYC"
+    },
+    {
+      "name": "CDD"
+    },
+    {
+      "name": "BSA"
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "alice@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "alice",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/FOSS"
+      ],
+      "requiredActions": [],
+      "firstName": "Alice",
+      "lastName": "Demo"
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "bob@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "bob",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/KYC"
+      ],
+      "requiredActions": [],
+      "firstName": "Bob",
+      "lastName": "Demo"
+    },
+    {
+      "username": "carol",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "carol@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "carol",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/CDD"
+      ],
+      "requiredActions": [],
+      "firstName": "Carol",
+      "lastName": "Demo"
+    },
+    {
+      "username": "dave",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "dave@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "dave",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/BSA"
+      ],
+      "requiredActions": [],
+      "firstName": "Dave",
+      "lastName": "Demo"
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "admin@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/FOSS",
+        "/KYC",
+        "/CDD",
+        "/BSA"
+      ],
+      "requiredActions": [],
+      "firstName": "Admin",
+      "lastName": "Demo"
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "kogito-console-react",
+      "name": "Task Console",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:8380/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8380"
+      ],
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "full.path": "false",
+            "claim.name": "groups",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "management-console-dev-webapp",
+      "name": "Management Console",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "redirectUris": [
+        "http://localhost:8280/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8280"
+      ],
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "full.path": "false",
+            "claim.name": "groups",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "account-opening-ui",
+      "name": "Account Opening UI",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "account-opening-ui-secret",
+      "standardFlowEnabled": true,
+      "redirectUris": [
+        "http://localhost:8090/login/oauth2/code/keycloak"
+      ],
+      "webOrigins": [
+        "http://localhost:8090"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:8090/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "full.path": "false",
+            "claim.name": "groups",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "adfs",
+      "displayName": "Corporate ADFS",
+      "providerId": "saml",
+      "enabled": false,
+      "trustEmail": true,
+      "storeToken": false,
+      "config": {
+        "REPLACE_ME": "Placeholder federation only - disabled until real ADFS values are filled in below, then flip enabled to true. Values come from your ADFS server's federation metadata, typically at https://<adfs-host>/federationmetadata/2007-06/federationmetadata.xml",
+        "singleSignOnServiceUrl": "https://adfs.example.com/adfs/ls/",
+        "singleLogoutServiceUrl": "https://adfs.example.com/adfs/ls/",
+        "nameIDPolicyFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+        "entityId": "http://localhost:8081/realms/kogito",
+        "signingCertificate": "REPLACE_WITH_ADFS_TOKEN_SIGNING_CERTIFICATE_BASE64",
+        "wantAuthnRequestsSigned": "false",
+        "validateSignature": "true",
+        "postBindingResponse": "true",
+        "postBindingAuthnRequest": "true"
+      }
+    }
+  ]
+}

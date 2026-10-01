@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Account Opening - New Application</title>
+    <style> body { font-family: sans-serif; margin: 2rem; } </style>
+</head>
+<body>
+<p><a href="/tasks">&larr; Back to My Tasks</a></p>
+<h1>Start Account Opening</h1>
+<form action="/start" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <label for="applicantName">Applicant name</label>
+    <input type="text" id="applicantName" name="applicantName" required/>
+    <button type="submit">Start</button>
+</form>
+</body>
+</html>

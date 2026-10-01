@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: Account Opening Process API
+  description: >
+    Subset of kogito-springboot-app's auto-generated REST API (AccountOpeningResource,
+    UserTasksResource) actually used by this UI. Captured by hand against the running
+    app rather than a full dump of /v3/api-docs, to keep the generated client small.
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /accountOpening:
+    post:
+      operationId: startAccountOpening
+      tags: [process]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountOpeningInput'
+      responses:
+        '201':
+          description: Process instance started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountOpeningOutput'
+  /usertasks/instance:
+    get:
+      operationId: listTasks
+      tags: [tasks]
+      parameters:
+        - name: user
+          in: query
+          schema: { type: string }
+        - name: group
+          in: query
+          schema: { type: array, items: { type: string } }
+          explode: true
+      responses:
+        '200':
+          description: Tasks visible to the given user/groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/UserTaskView' }
+  /usertasks/instance/{taskId}:
+    get:
+      operationId: getTask
+      tags: [tasks]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: user
+          in: query
+          schema: { type: string }
+        - name: group
+          in: query
+          schema: { type: array, items: { type: string } }
+          explode: true
+      responses:
+        '200':
+          description: Task detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserTaskView' }
+  /usertasks/instance/{taskId}/transition:
+    post:
+      operationId: transitionTask
+      tags: [tasks]
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: user
+          in: query
+          schema: { type: string }
+        - name: group
+          in: query
+          schema: { type: array, items: { type: string } }
+          explode: true
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TransitionInfo' }
+      responses:
+        '200':
+          description: Task after transition
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserTaskView' }
+  /accountOpening/{taskName}/schema:
+    get:
+      operationId: getTaskSchema
+      tags: [tasks]
+      parameters:
+        - name: taskName
+          in: path
+          required: true
+          description: Task name with spaces replaced by underscores, e.g. Fill_static_data_in_ROB
+          schema: { type: string }
+      responses:
+        '200':
+          description: JSON schema describing the task's input/output fields
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+components:
+  schemas:
+    AccountOpeningInput:
+      type: object
+      properties:
+        applicantName: { type: string }
+    AccountOpeningOutput:
+      type: object
+      properties:
+        id: { type: string }
+        applicantName: { type: string }
+        cif: { type: string }
+        robChecksPass: { type: boolean, nullable: true }
+        preCheckPass: { type: boolean, nullable: true }
+        cddDecision: { type: string }
+        kycDecision: { type: string }
+        clientUpgrade: { type: boolean, nullable: true }
+        furtherUpgrade: { type: boolean, nullable: true }
+        aoSuccessful: { type: boolean, nullable: true }
+    UserTaskState:
+      type: object
+      properties:
+        name: { type: string }
+        terminate: { type: string, nullable: true }
+    UserTaskView:
+      type: object
+      properties:
+        id: { type: string }
+        userTaskId: { type: string }
+        status: { $ref: '#/components/schemas/UserTaskState' }
+        taskName: { type: string }
+        taskDescription: { type: string, nullable: true }
+        actualOwner: { type: string, nullable: true }
+        potentialGroups: { type: array, items: { type: string } }
+        processInfo:
+          type: object
+          properties:
+            processInstanceId: { type: string }
+            processId: { type: string }
+        inputs: { type: object, additionalProperties: true }
+        outputs: { type: object, additionalProperties: true }
+    TransitionInfo:
+      type: object
+      properties:
+        transitionId: { type: string }
+        data: { type: object, additionalProperties: true }

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.4.3</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>account-opening-ui</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <description>
+    Business UI for the Account Opening process running in kogito-springboot-app: a task
+    inbox and simple forms for FOSS/KYC/CDD/BSA, backed by a REST client generated from
+    account-opening-api.yaml and logged into via Keycloak (see kogito-springboot-app's
+    keycloak/kogito-realm.json for the ADFS federation placeholder).
+  </description>
+
+  <properties>
+    <java.version>17</java.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+
+    <!-- Used by the generated REST client (resttemplate library). -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.2.25</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- The BPMN rendered by bpmn-js is the same file kogito-springboot-app executes.
+           Copy it in at build time rather than keeping a second copy in this repo:
+           Kogito exposes no REST endpoint that returns the process source. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-process-definition</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static/bpmn</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/../kogito-springboot-app/src/main/resources</directory>
+                  <includes>
+                    <include>ntb.bpmn2</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>7.11.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/src/main/resources/openapi/account-opening-api.yaml</inputSpec>
+              <generatorName>java</generatorName>
+              <library>resttemplate</library>
+              <apiPackage>com.example.ui.client.api</apiPackage>
+              <modelPackage>com.example.ui.client.model</modelPackage>
+              <invokerPackage>com.example.ui.client</invokerPackage>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <generateApiDocumentation>false</generateApiDocumentation>
+              <generateModelDocumentation>false</generateModelDocumentation>
+              <configOptions>
+                <dateLibrary>java8</dateLibrary>
+                <useJakartaEe>true</useJakartaEe>
+                <!-- Plain nullable fields instead of JsonNullable<T> wrappers - the generated
+                     RestTemplate's ObjectMapper doesn't have JsonNullableModule registered,
+                     and this UI never needs to distinguish "absent" from "null" anyway. -->
+                <openApiNullable>false</openApiNullable>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

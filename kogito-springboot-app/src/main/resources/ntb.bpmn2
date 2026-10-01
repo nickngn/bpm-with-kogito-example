@@ -1,0 +1,1001 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:itemDefinition id="_stringItem" structureRef="String" />
+  <bpmn:itemDefinition id="_booleanItem" structureRef="Boolean" />
+
+  <bpmn:collaboration id="Collaboration_1">
+    <bpmn:participant id="Participant_1" name="Account Opening Process" processRef="accountOpening" />
+  </bpmn:collaboration>
+
+  <bpmn:process id="accountOpening" name="Account Opening Process" drools:packageName="com.example" drools:version="1.0" isExecutable="true" processType="Public">
+
+    <!-- Process variables. Drive every gateway; all are optional on start. -->
+    <bpmn:property id="applicantName" name="applicantName" itemSubjectRef="_stringItem" />
+    <bpmn:property id="cif" name="cif" itemSubjectRef="_stringItem" />
+    <bpmn:property id="robChecksPass" name="robChecksPass" itemSubjectRef="_booleanItem" />
+    <bpmn:property id="preCheckPass" name="preCheckPass" itemSubjectRef="_booleanItem" />
+    <bpmn:property id="cddDecision" name="cddDecision" itemSubjectRef="_stringItem" />
+    <bpmn:property id="kycDecision" name="kycDecision" itemSubjectRef="_stringItem" />
+    <bpmn:property id="clientUpgrade" name="clientUpgrade" itemSubjectRef="_booleanItem" />
+    <bpmn:property id="furtherUpgrade" name="furtherUpgrade" itemSubjectRef="_booleanItem" />
+    <bpmn:property id="aoSuccessful" name="aoSuccessful" itemSubjectRef="_booleanItem" />
+
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_1" name="Data collection and filling">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_60days</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_4</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_2" name="Documents and KYC review / approval">
+        <bpmn:flowNodeRef>Gateway_Fork</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Join</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_CDD</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_6a</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_6b</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_6c</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_6d</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_3" name="Account opening and notification">
+        <bpmn:flowNodeRef>Task_10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_10b</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_1</bpmn:flowNodeRef>
+      <bpmn:flowNodeRef>EndEvent_2</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="Task_1" name="Fill static data in ROB">
+      <bpmn:documentation>1. FOSS fills in static data in ROB [FO/FOSS/KYC]</bpmn:documentation>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:incoming>Flow_20</bpmn:incoming>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_1_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_1_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_1_applicantNameOut" name="applicantName" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_1_robChecksPassOut" name="robChecksPass" itemSubjectRef="_booleanItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_1_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_1_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_1_applicantNameOut</bpmn:dataOutputRefs>
+          <bpmn:dataOutputRefs>Task_1_robChecksPassOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_1_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Fill static data in ROB</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_1_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_1_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">FOSS</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_1_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_1_applicantNameOut</bpmn:sourceRef>
+        <bpmn:targetRef>applicantName</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_1_robChecksPassOut</bpmn:sourceRef>
+        <bpmn:targetRef>robChecksPass</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:boundaryEvent id="Event_60days" name="60 days" attachedToRef="Task_1" cancelActivity="true">
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P60D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+
+    <bpmn:userTask id="Task_8" name="Expired">
+      <bpmn:documentation>8. Expired [FOSS]</bpmn:documentation>
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_8_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_8_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_8_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_8_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_8_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Expired</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_8_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_8_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">FOSS</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_8_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_1" name="ROB checks pass?" gatewayDirection="Diverging" default="Flow_4">
+      <bpmn:documentation>REVIEW: the "No" branch currently skips the Control Tower pre-check and goes straight to Task_3 (Reserve a CIF). Confirm whether this gateway is a pass/fail check or a "pre-check required?" routing decision.</bpmn:documentation>
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_2" name="Control Tower pre check">
+      <bpmn:documentation>2. Control Tower pre-check [KYC]</bpmn:documentation>
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_2_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_2_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_2_preCheckPassOut" name="preCheckPass" itemSubjectRef="_booleanItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_2_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_2_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_2_preCheckPassOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_2_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Control Tower pre check</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_2_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_2_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">KYC</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_2_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_2_preCheckPassOut</bpmn:sourceRef>
+        <bpmn:targetRef>preCheckPass</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_2" name="Pre-check pass?" gatewayDirection="Diverging" default="Flow_7">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_3" name="Reserve a CIF">
+      <bpmn:documentation>3. Reserve a CIF</bpmn:documentation>
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_3_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_3_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_3_cifOut" name="cif" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_3_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_3_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_3_cifOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_3_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Reserve a CIF</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_3_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_3_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">FOSS</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_3_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_3_cifOut</bpmn:sourceRef>
+        <bpmn:targetRef>cif</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="Task_4" name="Submit to CDD">
+      <bpmn:documentation>4. FOSS submits to CDD [FOSS]</bpmn:documentation>
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_4_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_4_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_4_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_4_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_4_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Submit to CDD</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_4_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_4_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">FOSS</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_4_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:inclusiveGateway id="Gateway_Fork" name="Start KYC and CDD review" gatewayDirection="Diverging">
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
+      <bpmn:outgoing>Flow_14</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+
+    <bpmn:userTask id="Task_7" name="KYC review in OKP">
+      <bpmn:documentation>7. KYC review in OKP [KYC]</bpmn:documentation>
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+      <bpmn:outgoing>Flow_15</bpmn:outgoing>
+      <bpmn:incoming>Flow_22</bpmn:incoming>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_7_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_7_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_7_kycDecisionOut" name="kycDecision" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_7_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_7_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_7_kycDecisionOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_7_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">KYC review in OKP</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_7_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_7_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">KYC</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_7_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_7_kycDecisionOut</bpmn:sourceRef>
+        <bpmn:targetRef>kycDecision</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_3" name="KYC decision?" gatewayDirection="Diverging" default="Flow_18">
+      <bpmn:incoming>Flow_15</bpmn:incoming>
+      <bpmn:outgoing>Flow_16</bpmn:outgoing>
+      <bpmn:outgoing>Flow_17</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_5" name="CDD review">
+      <bpmn:documentation>5. CDD review [CDD]</bpmn:documentation>
+      <bpmn:incoming>Flow_14</bpmn:incoming>
+      <bpmn:incoming>Flow_18</bpmn:incoming>
+      <bpmn:outgoing>Flow_19</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_5_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_5_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_5_cddDecisionOut" name="cddDecision" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_5_clientUpgradeOut" name="clientUpgrade" itemSubjectRef="_booleanItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_5_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_5_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_5_cddDecisionOut</bpmn:dataOutputRefs>
+          <bpmn:dataOutputRefs>Task_5_clientUpgradeOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_5_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">CDD review</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_5_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_5_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">CDD</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_5_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_5_cddDecisionOut</bpmn:sourceRef>
+        <bpmn:targetRef>cddDecision</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_5_clientUpgradeOut</bpmn:sourceRef>
+        <bpmn:targetRef>clientUpgrade</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_CDD" name="CDD decision?" gatewayDirection="Diverging" default="Flow_20">
+      <bpmn:incoming>Flow_19</bpmn:incoming>
+      <bpmn:outgoing>Flow_20</bpmn:outgoing>
+      <bpmn:outgoing>Flow_37</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:exclusiveGateway id="Gateway_4" name="Client upgrade in screening?" gatewayDirection="Diverging" default="Flow_22">
+      <bpmn:outgoing>Flow_21</bpmn:outgoing>
+      <bpmn:outgoing>Flow_22</bpmn:outgoing>
+      <bpmn:incoming>Flow_37</bpmn:incoming>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_6a" name="Inform BSA of upgrade">
+      <bpmn:documentation>6a. Inform BSA of upgrade; BSA awaits KYC approval [BSA]</bpmn:documentation>
+      <bpmn:incoming>Flow_21</bpmn:incoming>
+      <bpmn:outgoing>Flow_23</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_6a_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_6a_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_6a_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_6a_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6a_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Inform BSA of upgrade</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6a_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6a_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">BSA</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6a_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="Task_6b" name="Confirm KYC approval to BSA">
+      <bpmn:documentation>6b. Confirm KYC approval to BSA</bpmn:documentation>
+      <bpmn:incoming>Flow_23</bpmn:incoming>
+      <bpmn:outgoing>Flow_24</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_6b_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_6b_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_6b_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_6b_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6b_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Confirm KYC approval to BSA</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6b_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6b_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">KYC</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6b_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="Task_6c" name="Drop client to mass market">
+      <bpmn:documentation>6c. Customer Franchise drops client to mass market [BSA]</bpmn:documentation>
+      <bpmn:incoming>Flow_24</bpmn:incoming>
+      <bpmn:outgoing>Flow_25</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_6c_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_6c_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_6c_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_6c_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6c_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Drop client to mass market</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6c_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6c_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">BSA</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6c_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="Task_6d" name="Remove upgrade flag in ROB">
+      <bpmn:documentation>6d. CDD removes upgrade flag in ROB [CDD]</bpmn:documentation>
+      <bpmn:incoming>Flow_25</bpmn:incoming>
+      <bpmn:outgoing>Flow_26</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_6d_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_6d_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_6d_furtherUpgradeOut" name="furtherUpgrade" itemSubjectRef="_booleanItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_6d_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_6d_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_6d_furtherUpgradeOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6d_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Remove upgrade flag in ROB</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6d_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_6d_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">CDD</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_6d_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_6d_furtherUpgradeOut</bpmn:sourceRef>
+        <bpmn:targetRef>furtherUpgrade</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:inclusiveGateway id="Gateway_Join" name="KYC and CDD complete" gatewayDirection="Converging">
+      <bpmn:documentation>Inclusive (OR) join: fires once no other incoming branch can still deliver a token. This is what unblocks the "KYC Rejected" / "Return to CDD" / "no upgrade" paths that would deadlock a parallel join.</bpmn:documentation>
+      <bpmn:incoming>Flow_16</bpmn:incoming>
+      <bpmn:incoming>Flow_26</bpmn:incoming>
+      <bpmn:outgoing>Flow_29</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+
+    <bpmn:userTask id="Task_10" name="PBI and external account opening">
+      <bpmn:documentation>10. PBI and external account opening [BST/BSA]</bpmn:documentation>
+      <bpmn:incoming>Flow_29</bpmn:incoming>
+      <bpmn:outgoing>Flow_30</bpmn:outgoing>
+      <bpmn:incoming>Flow_33</bpmn:incoming>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_10_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_10_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:dataOutput id="Task_10_aoSuccessfulOut" name="aoSuccessful" itemSubjectRef="_booleanItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_10_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_10_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+          <bpmn:dataOutputRefs>Task_10_aoSuccessfulOut</bpmn:dataOutputRefs>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_10_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">PBI and external account opening</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_10_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_10_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">BSA</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_10_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation>
+        <bpmn:sourceRef>Task_10_aoSuccessfulOut</bpmn:sourceRef>
+        <bpmn:targetRef>aoSuccessful</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="Gateway_6" name="AO successful?" gatewayDirection="Diverging" default="Flow_32">
+      <bpmn:incoming>Flow_30</bpmn:incoming>
+      <bpmn:outgoing>Flow_31</bpmn:outgoing>
+      <bpmn:outgoing>Flow_32</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Task_10b" name="Trigger email and manual fix">
+      <bpmn:documentation>10b. Trigger email and manual fix</bpmn:documentation>
+      <bpmn:incoming>Flow_32</bpmn:incoming>
+      <bpmn:outgoing>Flow_33</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_10b_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_10b_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_10b_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_10b_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_10b_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Trigger email and manual fix</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_10b_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_10b_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">BSA</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_10b_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:scriptTask id="Task_11" name="Notify CDD KYC FO and FOSS" scriptFormat="http://www.java.com/java">
+      <bpmn:documentation>11. Notify CDD, KYC, FO and FOSS</bpmn:documentation>
+      <bpmn:incoming>Flow_31</bpmn:incoming>
+      <bpmn:outgoing>Flow_34</bpmn:outgoing>
+      <bpmn:script>System.out.println("[AO] Account opened for " + applicantName + ", CIF " + cif + " - notifying CDD, KYC, FO, FOSS");</bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:userTask id="Task_13" name="Sync portfolio data from RBO to PBI">
+      <bpmn:documentation>13. Sync portfolio data from RBO to PBI</bpmn:documentation>
+      <bpmn:incoming>Flow_34</bpmn:incoming>
+      <bpmn:outgoing>Flow_35</bpmn:outgoing>
+      <bpmn:ioSpecification>
+        <bpmn:dataInput id="Task_13_TaskNameIn" name="TaskName" itemSubjectRef="_stringItem" />
+        <bpmn:dataInput id="Task_13_GroupIdIn" name="GroupId" itemSubjectRef="_stringItem" />
+        <bpmn:inputSet>
+          <bpmn:dataInputRefs>Task_13_TaskNameIn</bpmn:dataInputRefs>
+          <bpmn:dataInputRefs>Task_13_GroupIdIn</bpmn:dataInputRefs>
+        </bpmn:inputSet>
+        <bpmn:outputSet>
+        </bpmn:outputSet>
+      </bpmn:ioSpecification>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_13_TaskNameIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">Sync portfolio data from RBO to PBI</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_13_TaskNameIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation>
+        <bpmn:targetRef>Task_13_GroupIdIn</bpmn:targetRef>
+        <bpmn:assignment>
+          <bpmn:from xsi:type="bpmn:tFormalExpression">BSA</bpmn:from>
+          <bpmn:to xsi:type="bpmn:tFormalExpression">Task_13_GroupIdIn</bpmn:to>
+        </bpmn:assignment>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+
+    <bpmn:scriptTask id="Task_16" name="Notify CDD FO and FOSS of rejection" scriptFormat="http://www.java.com/java">
+      <bpmn:documentation>16. Notify CDD, FO and FOSS of rejection</bpmn:documentation>
+      <bpmn:incoming>Flow_17</bpmn:incoming>
+      <bpmn:outgoing>Flow_36</bpmn:outgoing>
+      <bpmn:script>System.out.println("[AO] KYC rejected for " + applicantName + " - notifying CDD, FO, FOSS");</bpmn:script>
+    </bpmn:scriptTask>
+
+    <bpmn:endEvent id="EndEvent_1" name="End">
+      <bpmn:incoming>Flow_35</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:endEvent id="EndEvent_2" name="End (rejected)">
+      <bpmn:incoming>Flow_36</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_1" name="New → Prospect" sourceRef="StartEvent_1" targetRef="Task_1" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="Gateway_1" />
+    <bpmn:sequenceFlow id="Flow_3" name="Yes" sourceRef="Gateway_1" targetRef="Task_2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return robChecksPass != null &amp;&amp; robChecksPass;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_4" name="No" sourceRef="Gateway_1" targetRef="Task_3" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_2" targetRef="Gateway_2" />
+    <bpmn:sequenceFlow id="Flow_6" name="Yes" sourceRef="Gateway_2" targetRef="Task_3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return preCheckPass != null &amp;&amp; preCheckPass;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_7" name="No → KYC Rejected" sourceRef="Gateway_2" targetRef="Task_1" />
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Event_60days" targetRef="Task_8" />
+    <bpmn:sequenceFlow id="Flow_10" name="Reactivate → Prospect" sourceRef="Task_8" targetRef="Task_1" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_3" targetRef="Task_4" />
+    <bpmn:sequenceFlow id="Flow_12" name="Pending AO" sourceRef="Task_4" targetRef="Gateway_Fork" />
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Gateway_Fork" targetRef="Task_7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return true;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Gateway_Fork" targetRef="Task_5">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return true;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_7" targetRef="Gateway_3" />
+    <bpmn:sequenceFlow id="Flow_16" name="KYC Approved" sourceRef="Gateway_3" targetRef="Gateway_Join">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return "YES".equals(kycDecision);</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_17" name="KYC Rejected" sourceRef="Gateway_3" targetRef="Task_16">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return "NO".equals(kycDecision);</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_18" name="Return to CDD" sourceRef="Gateway_3" targetRef="Task_5" />
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_5" targetRef="Gateway_CDD" />
+    <bpmn:sequenceFlow id="Flow_20" name="NOK → Return to FOSS" sourceRef="Gateway_CDD" targetRef="Task_1" />
+    <bpmn:sequenceFlow id="Flow_37" name="OK → Submitted to KYC" sourceRef="Gateway_CDD" targetRef="Gateway_4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return "YES".equals(cddDecision);</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_21" name="Yes" sourceRef="Gateway_4" targetRef="Task_6a">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return clientUpgrade != null &amp;&amp; clientUpgrade;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_22" name="No" sourceRef="Gateway_4" targetRef="Task_7" />
+    <bpmn:sequenceFlow id="Flow_23" sourceRef="Task_6a" targetRef="Task_6b" />
+    <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_6b" targetRef="Task_6c" />
+    <bpmn:sequenceFlow id="Flow_25" sourceRef="Task_6c" targetRef="Task_6d" />
+    <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_6d" targetRef="Gateway_Join" />
+    <bpmn:sequenceFlow id="Flow_29" sourceRef="Gateway_Join" targetRef="Task_10" />
+    <bpmn:sequenceFlow id="Flow_30" sourceRef="Task_10" targetRef="Gateway_6" />
+    <bpmn:sequenceFlow id="Flow_31" name="Yes → AO Completed" sourceRef="Gateway_6" targetRef="Task_11">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="http://www.java.com/java">return aoSuccessful != null &amp;&amp; aoSuccessful;</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_32" name="No → AO Failed" sourceRef="Gateway_6" targetRef="Task_10b" />
+    <bpmn:sequenceFlow id="Flow_33" sourceRef="Task_10b" targetRef="Task_10" />
+    <bpmn:sequenceFlow id="Flow_34" sourceRef="Task_11" targetRef="Task_13" />
+    <bpmn:sequenceFlow id="Flow_35" sourceRef="Task_13" targetRef="EndEvent_1" />
+    <bpmn:sequenceFlow id="Flow_36" sourceRef="Task_16" targetRef="EndEvent_2" />
+
+    </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1">
+
+      <bpmndi:BPMNShape id="Participant_1_di" bpmnElement="Participant_1" isHorizontal="true">
+        <dc:Bounds x="0" y="0" width="2380" height="1130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1_di" bpmnElement="Lane_1" isHorizontal="true">
+        <dc:Bounds x="30" y="0" width="2350" height="380" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_2_di" bpmnElement="Lane_2" isHorizontal="true">
+        <dc:Bounds x="30" y="380" width="2350" height="440" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_3_di" bpmnElement="Lane_3" isHorizontal="true">
+        <dc:Bounds x="30" y="820" width="2350" height="310" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="50" y="192" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="56" y="235" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1_di" bpmnElement="Task_1">
+        <dc:Bounds x="140" y="170" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_60days_di" bpmnElement="Event_60days">
+        <dc:Bounds x="195" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="140" y="272" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_8_di" bpmnElement="Task_8">
+        <dc:Bounds x="310" y="280" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1_di" bpmnElement="Gateway_1" isMarkerVisible="true">
+        <dc:Bounds x="320" y="185" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="305" y="160" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_2_di" bpmnElement="Task_2">
+        <dc:Bounds x="420" y="40" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_2_di" bpmnElement="Gateway_2" isMarkerVisible="true">
+        <dc:Bounds x="600" y="55" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="588" y="30" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_3_di" bpmnElement="Task_3">
+        <dc:Bounds x="650" y="170" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_4_di" bpmnElement="Task_4">
+        <dc:Bounds x="830" y="170" width="110" height="80" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Fork_di" bpmnElement="Gateway_Fork">
+        <dc:Bounds x="1010" y="560" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="985" y="617" width="100" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_7_di" bpmnElement="Task_7">
+        <dc:Bounds x="1110" y="460" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_3_di" bpmnElement="Gateway_3" isMarkerVisible="true">
+        <dc:Bounds x="1300" y="480" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1288" y="455" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Join_di" bpmnElement="Gateway_Join">
+        <dc:Bounds x="1470" y="480" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1445" y="455" width="100" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_5_di" bpmnElement="Task_5">
+        <dc:Bounds x="1110" y="630" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_CDD_di" bpmnElement="Gateway_CDD" isMarkerVisible="true">
+        <dc:Bounds x="1270" y="650" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1260" y="627" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_4_di" bpmnElement="Gateway_4" isMarkerVisible="true">
+        <dc:Bounds x="1390" y="650" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1370" y="702" width="94" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_6a_di" bpmnElement="Task_6a">
+        <dc:Bounds x="1300" y="740" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_6b_di" bpmnElement="Task_6b">
+        <dc:Bounds x="1460" y="740" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_6c_di" bpmnElement="Task_6c">
+        <dc:Bounds x="1620" y="740" width="120" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_6d_di" bpmnElement="Task_6d">
+        <dc:Bounds x="1780" y="740" width="120" height="70" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_10_di" bpmnElement="Task_10">
+        <dc:Bounds x="1620" y="860" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_6_di" bpmnElement="Gateway_6" isMarkerVisible="true">
+        <dc:Bounds x="1800" y="875" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1788" y="850" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_11_di" bpmnElement="Task_11">
+        <dc:Bounds x="1920" y="860" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_13_di" bpmnElement="Task_13">
+        <dc:Bounds x="2080" y="860" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_10b_di" bpmnElement="Task_10b">
+        <dc:Bounds x="1920" y="1000" width="130" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_16_di" bpmnElement="Task_16">
+        <dc:Bounds x="1620" y="1000" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="2260" y="882" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2268" y="925" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="86" y="210" />
+        <di:waypoint x="140" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="250" y="210" />
+        <di:waypoint x="320" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="345" y="185" />
+        <di:waypoint x="345" y="150" />
+        <di:waypoint x="475" y="150" />
+        <di:waypoint x="475" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="352" y="130" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <di:waypoint x="370" y="210" />
+        <di:waypoint x="650" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="530" y="80" />
+        <di:waypoint x="600" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="650" y="80" />
+        <di:waypoint x="705" y="80" />
+        <di:waypoint x="705" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <di:waypoint x="600" y="80" />
+        <di:waypoint x="195" y="80" />
+        <di:waypoint x="195" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <di:waypoint x="213" y="268" />
+        <di:waypoint x="213" y="320" />
+        <di:waypoint x="310" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="310" y="320" />
+        <di:waypoint x="195" y="320" />
+        <di:waypoint x="195" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <di:waypoint x="760" y="210" />
+        <di:waypoint x="830" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12">
+        <di:waypoint x="885" y="250" />
+        <di:waypoint x="885" y="585" />
+        <di:waypoint x="1010" y="585" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="895" y="560" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13">
+        <di:waypoint x="1060" y="585" />
+        <di:waypoint x="1175" y="585" />
+        <di:waypoint x="1175" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14">
+        <di:waypoint x="1060" y="585" />
+        <di:waypoint x="1175" y="585" />
+        <di:waypoint x="1175" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15_di" bpmnElement="Flow_15">
+        <di:waypoint x="1240" y="505" />
+        <di:waypoint x="1300" y="505" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16_di" bpmnElement="Flow_16">
+        <di:waypoint x="1350" y="505" />
+        <di:waypoint x="1470" y="505" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1370" y="484" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17_di" bpmnElement="Flow_17">
+        <di:waypoint x="1325" y="480" />
+        <di:waypoint x="1325" y="420" />
+        <di:waypoint x="1695" y="420" />
+        <di:waypoint x="1695" y="1000" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1460" y="398" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18_di" bpmnElement="Flow_18">
+        <di:waypoint x="1300" y="505" />
+        <di:waypoint x="1175" y="505" />
+        <di:waypoint x="1175" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19">
+        <di:waypoint x="1240" y="675" />
+        <di:waypoint x="1270" y="675" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_37_di" bpmnElement="Flow_37">
+        <di:waypoint x="1320" y="675" />
+        <di:waypoint x="1390" y="675" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1300" y="647" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20">
+        <di:waypoint x="1270" y="675" />
+        <di:waypoint x="195" y="675" />
+        <di:waypoint x="195" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21">
+        <di:waypoint x="1390" y="675" />
+        <di:waypoint x="1360" y="675" />
+        <di:waypoint x="1360" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_22_di" bpmnElement="Flow_22">
+        <di:waypoint x="1390" y="675" />
+        <di:waypoint x="1175" y="675" />
+        <di:waypoint x="1175" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_23_di" bpmnElement="Flow_23">
+        <di:waypoint x="1420" y="775" />
+        <di:waypoint x="1460" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24">
+        <di:waypoint x="1580" y="775" />
+        <di:waypoint x="1620" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_25_di" bpmnElement="Flow_25">
+        <di:waypoint x="1740" y="775" />
+        <di:waypoint x="1780" y="775" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_26_di" bpmnElement="Flow_26">
+        <di:waypoint x="1780" y="775" />
+        <di:waypoint x="1495" y="775" />
+        <di:waypoint x="1495" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_29_di" bpmnElement="Flow_29">
+        <di:waypoint x="1520" y="505" />
+        <di:waypoint x="1685" y="505" />
+        <di:waypoint x="1685" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_30_di" bpmnElement="Flow_30">
+        <di:waypoint x="1750" y="900" />
+        <di:waypoint x="1800" y="900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_31_di" bpmnElement="Flow_31">
+        <di:waypoint x="1850" y="900" />
+        <di:waypoint x="1920" y="900" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1825" y="872" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_32_di" bpmnElement="Flow_32">
+        <di:waypoint x="1825" y="925" />
+        <di:waypoint x="1825" y="960" />
+        <di:waypoint x="1985" y="960" />
+        <di:waypoint x="1985" y="1000" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1855" y="938" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_33_di" bpmnElement="Flow_33">
+        <di:waypoint x="1920" y="1040" />
+        <di:waypoint x="1685" y="1040" />
+        <di:waypoint x="1685" y="940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_34_di" bpmnElement="Flow_34">
+        <di:waypoint x="2030" y="900" />
+        <di:waypoint x="2080" y="900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_35_di" bpmnElement="Flow_35">
+        <di:waypoint x="2210" y="900" />
+        <di:waypoint x="2260" y="900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_36_di" bpmnElement="Flow_36">
+        <di:waypoint x="1770" y="1040" />
+        <di:waypoint x="2278" y="1040" />
+        <di:waypoint x="2278" y="1052" />
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNShape id="EndEvent_2_di" bpmnElement="EndEvent_2">
+        <dc:Bounds x="2260" y="1052.0" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2268" y="1095.0" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

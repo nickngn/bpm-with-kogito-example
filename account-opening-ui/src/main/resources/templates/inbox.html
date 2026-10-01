@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Account Opening - My Tasks</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        form { display: inline; }
+    </style>
+</head>
+<body>
+<p>Logged in as <b th:text="${user.username()}"></b> (groups: <span th:text="${user.groups()}"></span>) &middot;
+   <a href="/start">Start new Account Opening</a> &middot;
+   <form action="/logout" method="post">
+       <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+       <button type="submit">Log out</button>
+   </form>
+</p>
+<h1>My Tasks</h1>
+<table>
+    <tr><th>Task</th><th>Process Instance</th><th>Status</th><th>Owner</th><th></th></tr>
+    <tr th:each="task : ${tasks}">
+        <td th:text="${task.taskName}"></td>
+        <td th:text="${task.processInfo.processInstanceId}"></td>
+        <td th:text="${task.status.name}"></td>
+        <td th:text="${task.actualOwner}"></td>
+        <td>
+            <a th:href="@{'/tasks/' + ${task.id}}">Open</a>
+            <form th:action="@{'/tasks/' + ${task.id} + '/claim'}" method="post"
+                  th:if="${task.status.name == 'Ready'}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit">Claim</button>
+            </form>
+            <form th:action="@{'/tasks/' + ${task.id} + '/release'}" method="post"
+                  th:if="${task.status.name == 'Reserved' and task.actualOwner == user.username()}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit">Release</button>
+            </form>
+        </td>
+    </tr>
+</table>
+<p th:if="${tasks.isEmpty()}">No tasks assigned to you right now.</p>
+</body>
+</html>

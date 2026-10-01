@@ -1,0 +1,49 @@
+# Keycloak, Management Console and Task Console, shared by the sibling kogito-springboot-app
+# and account-opening-ui projects - see their own READMEs for how each is started; neither
+# is started here, both run on the host with mvn spring-boot:run.
+#
+# kogito-springboot-app embeds its own Data Index (GraphQL at /graphql) and process/task
+# management REST endpoints, so these consoles only need its URL: http://localhost:8080.
+# Management Console takes that URL interactively ("Connect to a runtime"); Task Console
+# takes it as a fixed env var below - see kogito-springboot-app/README.md for what Keycloak
+# here does and doesn't secure (console login only, not that app's REST API).
+#
+# Usage:
+#   docker compose up                                     # in one terminal
+#   (cd kogito-springboot-app && mvn spring-boot:run)     # in another
+#   (cd account-opening-ui && mvn spring-boot:run)        # optionally, in a third
+#   open http://localhost:8081       # Keycloak admin console (admin/admin)
+#   open http://localhost:8280       # Management Console
+#   open http://localhost:8380       # Task Console - log in as e.g. alice/alice
+#   open http://localhost:8090       # Account Opening UI - log in as e.g. alice/alice
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.3
+    command: start-dev --import-realm
+    ports:
+      - "8081:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/kogito-realm.json:/opt/keycloak/data/import/kogito-realm.json:ro
+
+  management-console:
+    image: docker.io/apache/incubator-kie-kogito-management-console:10.1.0
+    ports:
+      - "8280:8080"
+
+  task-console:
+    image: docker.io/apache/incubator-kie-kogito-task-console:10.0.0
+    ports:
+      - "8380:8080"
+    depends_on:
+      - keycloak
+    environment:
+      RUNTIME_TOOLS_TASK_CONSOLE_DATA_INDEX_ENDPOINT: "http://localhost:8080/graphql"
+      # Modern Keycloak (17+) dropped the "/auth" context path the console's built-in default
+      # still assumes, and its realm/client here are ours - see keycloak/kogito-realm.json.
+      KOGITO_CONSOLES_KEYCLOAK_URL: "http://localhost:8081"
+      KOGITO_CONSOLES_KEYCLOAK_REALM: "kogito"
+      KOGITO_CONSOLES_KEYCLOAK_CLIENT_ID: "kogito-console-react"
+      KOGITO_CONSOLES_KEYCLOAK_HEALTH_CHECK_URL: "http://localhost:8081/realms/kogito/.well-known/openid-configuration"
